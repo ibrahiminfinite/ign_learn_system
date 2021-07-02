@@ -6,12 +6,13 @@ class DiffTest
 
 public: void MoveCar()
     {
+    common::Console::SetVerbosity(3);
     gazebo::ServerConfig serverConfig;
     auto _sdf_file = "/home/dark/CLionProjects/ign_learn_system/worlds/diff_drive.sdf";
     serverConfig.SetSdfFile(_sdf_file);
 
     gazebo::Server server(serverConfig);
-    server.Run();
+    server.Run(true,0,false);
     }
 
 };
