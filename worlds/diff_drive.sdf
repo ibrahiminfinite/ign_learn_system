@@ -227,7 +227,7 @@
       </joint>
       
       <plugin
-        filename="DiffSystem.so"
+        filename="libDiffSystem.so"
         name="diff_system::DiffSystem">
       </plugin>
 
