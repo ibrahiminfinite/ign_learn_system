@@ -10,7 +10,7 @@ find_package(ignition-plugin${IGN_PLUGIN_VER} REQUIRED COMPONENTS register)
 # find_package(ignition-common${IGN_COMMON_VER})
 find_package(ignition-gazebo${IGN_GAZEBO_VER})
 
-add_library(DiffSystem SHARED diff_system.cpp)
+add_library(DiffSystem SHARED diff_system.cc)
 
 target_link_libraries(DiffSystem
         ignition-plugin${IGN_PLUGIN_VER}::ignition-plugin${IGN_PLUGIN_VER}
@@ -18,7 +18,7 @@ target_link_libraries(DiffSystem
         )
 
 
-add_executable(DiffTest main.cpp)
+add_executable(DiffTest main.cc)
 target_link_libraries(DiffTest
         ignition-gazebo${IGN_GAZEBO_VER}::ignition-gazebo${IGN_GAZEBO_VER}
         DiffSystem)
