@@ -8,7 +8,7 @@ namespace diff_system
     class DiffSystem:
         public ignition::gazebo::ISystemConfigure,
         public ignition::gazebo::System,
-        public ignition::gazebo::ISystemPostUpdate
+        public ignition::gazebo::ISystemPreUpdate
     {
     // Definition begin
 
@@ -17,8 +17,8 @@ namespace diff_system
 
     public : DiffSystem();
     public : ~DiffSystem() override;
-    public : void PostUpdate(const ignition::gazebo::UpdateInfo &_info,
-                             const ignition::gazebo::EntityComponentManager &_ecm) override;
+    public : void PreUpdate(const ignition::gazebo::UpdateInfo &_info,
+                            ignition::gazebo::EntityComponentManager &_ecm) override;
 
     public : void Configure(const ignition::gazebo::Entity &_entity,
                             const std::shared_ptr<const sdf::Element> &_sdf,

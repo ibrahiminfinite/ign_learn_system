@@ -2,8 +2,9 @@
 
 #include "ignition/gazebo/components/CanonicalLink.hh"
 #include "ignition/gazebo/Model.hh"
-#include "ignition/gazebo/Entity.hh"
+//#include "ignition/gazebo/Entity.hh"
 #include "ignition/gazebo/Link.hh"
+#include "ignition/gazebo/components/JointVelocityCmd.hh"
 
 #include "diff_system.hh"
 
@@ -15,15 +16,17 @@ using namespace diff_system;
 class diff_system::DiffSystemPrivate
 {
 
-public : Model model{kNullEntity};
-public : Link canonicalLink{kNullEntity};
+public :
+    Model model{kNullEntity};
+    Link canonicalLink{kNullEntity};
 
-public : std::vector<Entity> leftJoints;
-public : std::vector<Entity> rightJoints;
-public : std::vector<std::string> leftJointNames;
-public : std::vector<std::string> rightJointsNames;
+    std::vector<Entity> leftJoints;
+    std::vector<Entity> rightJoints;
+    std::vector<std::string> leftJointNames;
+    std::vector<std::string> rightJointsNames;
+    double leftJointSpeed{0};
 
-public : std::string tmsg="TEST PRIVATE";
+    std::string tmsg="TEST PRIVATE";
 };
 
 DiffSystem::DiffSystem()
@@ -50,17 +53,43 @@ void DiffSystem::Configure(const Entity &_entity, const std::shared_ptr<const sd
         return;
     }
 
+    //Get the joints
+    auto ptr = const_cast<sdf::Element *>(_sdf.get());
+    // Get params from SDF
+    sdf::ElementPtr sdfElem = ptr->GetElement("left_joint");
+//    sdfElem = ptr->GetElement("right_joint");
+    while (sdfElem)
+    {
+        this->dataPtr->leftJointNames.push_back(sdfElem->Get<std::string>());
+        ignmsg << "NAME : "<<sdfElem->Get<std::string>()<<std::endl;
+        sdfElem = sdfElem->GetNextElement("left_joint");
+    }
 }
 
-void DiffSystem::PostUpdate(const UpdateInfo &_info,
-                              const EntityComponentManager &_ecm)
+
+void DiffSystem::PreUpdate(const UpdateInfo &_info,
+                           EntityComponentManager &_ecm)
 {
-    ignmsg << "DiffSystem::PostUpdate" << std::endl;
+    ignmsg << "DiffSystem::PreUpdate" << std::endl;
+
+    // Setting wheel velocities
+    for (Entity joint : this->dataPtr->leftJoints)
+    {
+        //get pointer to component via ECM
+        auto vel = _ecm.Component<components::JointVelocityCmd>(joint);
+        if (vel == nullptr)
+        {
+            ignmsg << "Creating component JointVelocityCmd"<<std::endl;
+            _ecm.CreateComponent(
+                    joint, components::JointVelocityCmd({this->dataPtr->leftJointSpeed}));
+
+        }
+    }
 }
 
 IGNITION_ADD_PLUGIN(
         diff_system::DiffSystem,
         ignition::gazebo::System,
-        diff_system::DiffSystem::ISystemPostUpdate,
+        diff_system::DiffSystem::ISystemPreUpdate,
         diff_system::DiffSystem::ISystemConfigure
         )
