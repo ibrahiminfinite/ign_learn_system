@@ -12,7 +12,7 @@ auto _sdf_file = "/home/dark/CLionProjects/ign_learn_system/worlds/diff_drive.sd
 serverConfig.SetSdfFile(_sdf_file);
 
 gazebo::Server server(serverConfig);
-server.Run(true,1,false);
+server.Run(true,0,false);
 }
 
 };
