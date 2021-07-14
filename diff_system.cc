@@ -5,6 +5,7 @@
 //#include "ignition/gazebo/Entity.hh"
 #include "ignition/gazebo/Link.hh"
 #include "ignition/gazebo/components/JointVelocityCmd.hh"
+#include "ignition/gazebo/components/JointVelocity.hh"
 
 #include "diff_system.hh"
 
@@ -179,7 +180,15 @@ void DiffSystem::PreUpdate(const UpdateInfo &_info,
 void DiffSystem::PostUpdate(const UpdateInfo &_info,
                             const EntityComponentManager &_ecm)
 {
+    //Since this car has only one revolute joint on each side , we can skip the loop
 
+    Entity leftJoint =  this->dataPtr->leftJoints[0];
+    auto lvel = _ecm.Component<components::JointVelocity>(leftJoint);
+    ignmsg << "Joint Velocity left : " << lvel->Data()[0] <<  std::endl;
+
+    Entity rightJoint =  this->dataPtr->leftJoints[0];
+    auto rvel = _ecm.Component<components::JointVelocity>(rightJoint);
+    ignmsg << "Joint Velocity right : " << rvel->Data()[0] <<  std::endl;
 }
 
 ////////////////////////////////////////////////////
